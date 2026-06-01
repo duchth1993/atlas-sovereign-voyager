@@ -1,29 +1,32 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { TopBar } from "@/components/atlas/TopBar";
+import { HeroIdentity } from "@/components/atlas/HeroIdentity";
+import { AtlasMap } from "@/components/atlas/AtlasMap";
+import { NexusCard } from "@/components/atlas/NexusCard";
+import { OpnHub } from "@/components/atlas/OpnHub";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "ATLAS Explorer — Sovereign AI for IOPn" },
+      { name: "description", content: "Sovereign AI environment explorer for government data ownership and real-time analytics on OPN Chain." },
+      { property: "og:title", content: "ATLAS Explorer — IOPn" },
+      { property: "og:description", content: "Your identity follows every transaction. Built on OPN Chain." },
     ],
   }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="mx-auto max-w-md min-h-screen relative">
+      <TopBar />
+      <main className="space-y-6 pb-12">
+        <HeroIdentity />
+        <AtlasMap />
+        <NexusCard />
+        <OpnHub />
+      </main>
     </div>
   );
 }
