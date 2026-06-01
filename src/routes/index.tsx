@@ -19,13 +19,27 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="mx-auto max-w-md min-h-screen relative">
+    <div className="min-h-screen relative">
       <TopBar />
-      <main className="space-y-6 pb-12">
-        <HeroIdentity />
-        <AtlasMap />
-        <NexusCard />
-        <OpnHub />
+
+      {/* Mobile: stacked. Desktop: full bleed with grid */}
+      <main className="mx-auto max-w-md lg:max-w-7xl px-0 lg:px-8 pb-12">
+        <div className="lg:pt-4">
+          <HeroIdentity />
+        </div>
+
+        <div className="lg:grid lg:grid-cols-3 lg:gap-6 space-y-6 lg:space-y-0">
+          <div className="lg:col-span-2">
+            <AtlasMap />
+          </div>
+          <div className="lg:col-span-1">
+            <NexusCard />
+          </div>
+        </div>
+
+        <div className="mt-6 lg:mt-8">
+          <OpnHub />
+        </div>
       </main>
     </div>
   );

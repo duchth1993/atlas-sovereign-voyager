@@ -1,12 +1,14 @@
 import { Trophy, Zap } from "lucide-react";
 
+const fmt = (n: number) => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
 export function NexusCard() {
   const rep = 14820;
   const next = 20000;
   const pct = (rep / next) * 100;
 
   return (
-    <section className="px-5">
+    <section id="nexus" className="px-5">
       <div className="glass rounded-2xl p-5 relative overflow-hidden">
         <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-primary/30 blur-3xl" />
         <div className="relative">
@@ -22,8 +24,8 @@ export function NexusCard() {
 
           <div className="mt-5">
             <div className="flex items-baseline justify-between font-mono text-xs">
-              <span><span className="text-2xl font-bold font-display">{rep.toLocaleString()}</span> REP</span>
-              <span className="text-muted-foreground">{next.toLocaleString()} → Tier V</span>
+              <span><span className="text-2xl font-bold font-display">{fmt(rep)}</span> REP</span>
+              <span className="text-muted-foreground">{fmt(next)} → Tier V</span>
             </div>
             <div className="mt-2 h-1.5 rounded-full bg-background/60 overflow-hidden">
               <div

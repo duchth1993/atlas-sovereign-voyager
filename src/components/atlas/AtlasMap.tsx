@@ -29,7 +29,7 @@ export function AtlasMap() {
   }, []);
 
   return (
-    <section className="px-5">
+    <section id="network" className="px-5">
       <div className="flex items-end justify-between mb-3">
         <div>
           <div className="text-[10px] uppercase tracking-[0.2em] text-primary/80">ATLAS Network</div>
@@ -41,7 +41,7 @@ export function AtlasMap() {
       </div>
 
       <div className="glass rounded-2xl p-4 relative overflow-hidden">
-        <div className="relative h-56 rounded-xl bg-background/40 overflow-hidden border border-border/60">
+        <div className="relative h-56 lg:h-[28rem] rounded-xl bg-background/40 overflow-hidden border border-border/60">
           <div className="absolute inset-0 bg-grid opacity-50" />
           <div className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent animate-scan" />
 
