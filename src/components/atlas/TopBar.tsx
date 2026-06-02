@@ -67,7 +67,7 @@ export function TopBar() {
             <a href="#network" className="hover:text-foreground transition">Network</a>
             <a href="#nexus" className="hover:text-foreground transition">Nexus</a>
             <a href="#hub" className="hover:text-foreground transition">OPN Hub</a>
-            <a href="#docs" className="hover:text-foreground transition">Docs</a>
+            <a href="https://iopn.io/atlas" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition">Docs</a>
           </nav>
         </div>
 
