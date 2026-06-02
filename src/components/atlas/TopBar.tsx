@@ -1,20 +1,50 @@
-/**
- * TopBar.tsx — updated với live block indicator
- * Thay thế file src/components/atlas/TopBar.tsx
- */
-import { useState } from "react";
-import { Shield, Wifi, ChevronDown } from "lucide-react";
+import { Shield, Wifi, ChevronDown, AlertTriangle, Loader2 } from "lucide-react";
 import { useOPNChain } from "@/hooks/useOPNChain";
+import { useWallet, shortAddress } from "@/hooks/useWallet";
 import logo from "@/assets/iopn-logo.webp";
 
 export function TopBar() {
-  const [connected, setConnected] = useState(false);
   const { blockNumber, latencyMs, isConnected } = useOPNChain(4000);
+  const {
+    address,
+    isCorrectChain,
+    isConnecting,
+    hasProvider,
+    error,
+    connect,
+    disconnect,
+    switchToOPN,
+  } = useWallet();
 
   const latencyDisplay = latencyMs !== null ? `${latencyMs}ms` : "…";
-  const blockDisplay = blockNumber !== null
-    ? `#${blockNumber.toLocaleString()}`
-    : "syncing…";
+  const blockDisplay = blockNumber !== null ? `#${blockNumber.toLocaleString()}` : "syncing…";
+
+  const handleClick = () => {
+    if (!address) return connect();
+    if (!isCorrectChain) return switchToOPN();
+    disconnect();
+  };
+
+  const buttonLabel = (() => {
+    if (isConnecting) return "Connecting…";
+    if (!address) return hasProvider ? "Connect MetaMask" : "Install MetaMask";
+    if (!isCorrectChain) return "Switch to OPN";
+    return `neo.${shortAddress(address)}`;
+  })();
+
+  const buttonIcon = isConnecting
+    ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+    : !address
+      ? <Wifi className="h-3.5 w-3.5" />
+      : !isCorrectChain
+        ? <AlertTriangle className="h-3.5 w-3.5" />
+        : <Shield className="h-3.5 w-3.5" />;
+
+  const buttonClass = address && isCorrectChain
+    ? "border-success/40 bg-success/10 text-success"
+    : address && !isCorrectChain
+      ? "border-warning/40 bg-warning/10 text-warning"
+      : "border-primary/40 bg-primary/15 text-foreground glow-ring";
 
   return (
     <header className="sticky top-0 z-30 glass border-b border-border/60">
@@ -42,7 +72,6 @@ export function TopBar() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Live chain indicator — chỉ hiện trên desktop */}
           <div className="hidden lg:flex items-center gap-2 font-mono text-[11px] text-muted-foreground">
             <span
               className={`h-1.5 w-1.5 rounded-full ${
@@ -53,19 +82,20 @@ export function TopBar() {
           </div>
 
           <button
-            onClick={() => setConnected((c) => !c)}
-            className={`group flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-              connected
-                ? "border-success/40 bg-success/10 text-success"
-                : "border-primary/40 bg-primary/15 text-foreground glow-ring"
-            }`}
+            onClick={handleClick}
+            disabled={isConnecting}
+            title={error ?? undefined}
+            className={`group flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-all disabled:opacity-60 ${buttonClass}`}
           >
-            {connected ? <Shield className="h-3.5 w-3.5" /> : <Wifi className="h-3.5 w-3.5" />}
-            {connected ? "neo.0x9F..A4D2" : "Connect NeoID"}
+            {buttonIcon}
+            {buttonLabel}
             <ChevronDown className="h-3 w-3 opacity-60 transition group-hover:translate-y-0.5" />
           </button>
         </div>
       </div>
+      {error && (
+        <div className="px-5 lg:px-8 pb-2 text-[10px] text-destructive/80 font-mono">⚠ {error}</div>
+      )}
     </header>
   );
 }
