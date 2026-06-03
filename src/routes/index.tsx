@@ -4,6 +4,7 @@ import { HeroIdentity } from "@/components/atlas/HeroIdentity";
 import { AtlasMap } from "@/components/atlas/AtlasMap";
 import { NexusCard } from "@/components/atlas/NexusCard";
 import { OpnHub } from "@/components/atlas/OpnHub";
+import { StakingModule } from "@/components/atlas/StakingModule";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -35,6 +36,10 @@ function Index() {
           <div className="lg:col-span-1">
             <NexusCard />
           </div>
+        </div>
+
+        <div className="mt-6 lg:mt-8">
+          <StakingModule />
         </div>
 
         <div className="mt-6 lg:mt-8">
