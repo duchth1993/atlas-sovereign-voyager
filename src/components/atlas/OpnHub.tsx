@@ -1,9 +1,7 @@
-/**
- * OpnHub.tsx — updated với live OPN Chain data
- * Thay thế file src/components/atlas/OpnHub.tsx
- */
-import { Coins, Vault, Server, ArrowUpRight, Wifi, WifiOff, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { Coins, Vault, Server, ArrowUpRight, Wifi, WifiOff, Loader2, ChevronDown } from "lucide-react";
 import { useOPNChain, OPN_CHAIN } from "@/hooks/useOPNChain";
+import { StakingModule } from "./StakingModule";
 
 const TILES = [
   { icon: Coins, label: "Staking", meta: "12.4% APY", accent: "from-primary/80 to-primary/20" },
@@ -13,12 +11,17 @@ const TILES = [
 
 export function OpnHub() {
   const { blockNumber, latencyMs, gasPrice, isConnected, isFetching, error } = useOPNChain(4000);
+  const [activeTile, setActiveTile] = useState<string | null>("Staking");
 
   const latencyDisplay = latencyMs !== null ? `${latencyMs}ms` : "…";
   const blockDisplay = blockNumber !== null
     ? `#${blockNumber.toLocaleString()}`
     : "…";
   const gasPriceDisplay = gasPrice !== null ? `${gasPrice} Gwei` : "…";
+
+  const toggleTile = (label: string) => {
+    setActiveTile((prev) => (prev === label ? null : label));
+  };
 
   return (
     <section id="hub" className="px-5 pb-8">
@@ -31,22 +34,45 @@ export function OpnHub() {
       </div>
 
       <div className="space-y-2 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-3">
-        {TILES.map(({ icon: Icon, label, meta, accent }) => (
-          <button
-            key={label}
-            className="group w-full glass rounded-xl p-4 flex items-center gap-3 hover:border-primary/60 transition-all"
-          >
-            <div className={`h-11 w-11 rounded-lg bg-gradient-to-br ${accent} grid place-items-center`}>
-              <Icon className="h-5 w-5" />
-            </div>
-            <div className="flex-1 text-left">
-              <div className="font-display text-sm font-semibold">{label}</div>
-              <div className="font-mono text-[10px] text-muted-foreground">{meta}</div>
-            </div>
-            <ArrowUpRight className="h-4 w-4 text-muted-foreground transition group-hover:text-primary group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </button>
-        ))}
+        {TILES.map(({ icon: Icon, label, meta, accent }) => {
+          const isActive = activeTile === label;
+          return (
+            <button
+              key={label}
+              onClick={() => toggleTile(label)}
+              className={`group w-full glass rounded-xl p-4 flex items-center gap-3 transition-all ${
+                isActive ? "border-primary/60" : "hover:border-primary/60"
+              }`}
+            >
+              <div className={`h-11 w-11 rounded-lg bg-gradient-to-br ${accent} grid place-items-center`}>
+                <Icon className="h-5 w-5" />
+              </div>
+              <div className="flex-1 text-left">
+                <div className="font-display text-sm font-semibold">{label}</div>
+                <div className="font-mono text-[10px] text-muted-foreground">{meta}</div>
+              </div>
+              <ChevronDown className={`h-4 w-4 text-muted-foreground transition group-hover:text-primary ${isActive ? "rotate-180 text-primary" : ""}`} />
+            </button>
+          );
+        })}
       </div>
+
+      {/* Expanded tile content */}
+      {activeTile === "Staking" && (
+        <div className="mt-3">
+          <StakingModule embedded />
+        </div>
+      )}
+      {activeTile === "RWA Vault" && (
+        <div className="mt-3 glass rounded-xl p-4 text-sm text-muted-foreground">
+          RWA Vault module coming soon — tokenized real-world assets on OPN Chain.
+        </div>
+      )}
+      {activeTile === "ATLAS Tools" && (
+        <div className="mt-3 glass rounded-xl p-4 text-sm text-muted-foreground">
+          ATLAS Tools module coming soon — sovereign AI tooling suite.
+        </div>
+      )}
 
       {/* ── Live Chain Status ─────────────────────────────────────── */}
       <div className="mt-6 glass rounded-xl p-4">

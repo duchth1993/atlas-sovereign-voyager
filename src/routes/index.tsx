@@ -38,9 +38,6 @@ function Index() {
           </div>
         </div>
 
-        <div className="mt-6 lg:mt-8">
-          <StakingModule />
-        </div>
 
         <div className="mt-6 lg:mt-8">
           <OpnHub />
