@@ -52,7 +52,7 @@ function fmtCountdown(ms: number) {
   return `${h}h ${m}m`;
 }
 
-export function StakingModule() {
+export function StakingModule({ embedded = false }: { embedded?: boolean }) {
   const { address, isCorrectChain, connect, switchToOPN } = useWallet();
   const [amount, setAmount] = useState("");
   const [tier, setTier] = useState<number>(NEXUS_TIER);
@@ -183,150 +183,155 @@ export function StakingModule() {
     } finally { setBusy(null); }
   };
 
-  return (
-    <section id="staking" className="px-5">
-      <div className="glass rounded-2xl p-5 relative overflow-hidden">
-        <div className="absolute -top-20 -left-20 h-44 w-44 rounded-full bg-primary/20 blur-3xl" />
-        <div className="relative">
-          {/* Header */}
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-[10px] uppercase tracking-[0.2em] text-primary/80">OPN Staking</div>
-              <h2 className="font-display text-2xl font-bold mt-1">Stake · Earn · Govern</h2>
-              <div className="mt-1 font-mono text-[10px] text-muted-foreground break-all">
-                {STAKING_CONTRACT}
-              </div>
-            </div>
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-primary/30 grid place-items-center glow-ring">
-              <Coins className="h-5 w-5" />
+  const content = (
+    <div className="glass rounded-2xl p-5 relative overflow-hidden">
+      <div className="absolute -top-20 -left-20 h-44 w-44 rounded-full bg-primary/20 blur-3xl" />
+      <div className="relative">
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.2em] text-primary/80">OPN Staking</div>
+            <h2 className="font-display text-2xl font-bold mt-1">Stake · Earn · Govern</h2>
+            <div className="mt-1 font-mono text-[10px] text-muted-foreground break-all">
+              {STAKING_CONTRACT}
             </div>
           </div>
-
-          {/* Stats strip */}
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            <Stat label="APY" value={`${APY}%`} />
-            <Stat label="TVL" value={TVL_USD} />
-            <Stat label="Chain" value={`#${OPN_CHAIN.chainId}`} />
-          </div>
-
-          {/* Controls */}
-          <div className="mt-5 grid lg:grid-cols-2 gap-4">
-            <div className="space-y-3">
-              <label className="block">
-                <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Amount to stake (OPN)</span>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.0001"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="0.00"
-                  className="mt-1 w-full rounded-lg bg-background/60 border border-border/60 px-3 py-2 font-mono text-sm focus:outline-none focus:border-primary/60"
-                />
-              </label>
-
-              <div className="grid grid-cols-2 gap-2">
-                <label className="block">
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Tier</span>
-                  <select
-                    value={tier}
-                    onChange={(e) => setTier(Number(e.target.value))}
-                    className="mt-1 w-full rounded-lg bg-background/60 border border-border/60 px-2 py-2 text-sm focus:outline-none focus:border-primary/60"
-                  >
-                    {[1,2,3,4,5].map((t) => (
-                      <option key={t} value={t}>Tier {t} · {TIER_MULTIPLIER[t]}x{t === NEXUS_TIER ? " (Nexus)" : ""}</option>
-                    ))}
-                  </select>
-                </label>
-                <label className="block">
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Lock</span>
-                  <select
-                    value={lockDays}
-                    onChange={(e) => setLockDays(Number(e.target.value))}
-                    className="mt-1 w-full rounded-lg bg-background/60 border border-border/60 px-2 py-2 text-sm focus:outline-none focus:border-primary/60"
-                  >
-                    {LOCK_OPTIONS.map((d) => (
-                      <option key={d} value={d}>{d} days</option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-
-              <div className="text-[11px] font-mono text-muted-foreground">
-                Est. yearly reward: <span className="text-primary">{fmtOPN(estYearly)} OPN</span>
-              </div>
-            </div>
-
-            {/* Position panel */}
-            <div className="rounded-xl bg-background/40 border border-border/60 p-3 space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Wallet</span>
-                <span className="font-mono">{address ? shortAddress(address) : "—"}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Staked</span>
-                <span className="font-mono">{stake ? `${fmtOPN(stake.amount)} OPN` : "0 OPN"}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Tier · Multiplier</span>
-                <span className="font-mono">{stake ? `T${stake.tier} · ${TIER_MULTIPLIER[stake.tier]}x` : `T${tier} · ${TIER_MULTIPLIER[tier]}x`}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground flex items-center gap-1"><Lock className="h-3 w-3" /> Lock ends</span>
-                <span className={`font-mono ${isLocked ? "text-warning" : "text-success"}`}>
-                  {stake ? (isLocked ? fmtCountdown(timeLeft) : "Unlocked") : "—"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground flex items-center gap-1"><Gift className="h-3 w-3" /> Pending</span>
-                <span className="font-mono text-primary">{fmtOPN(pending)} OPN</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            <button
-              onClick={onStake}
-              disabled={!!busy}
-              className="rounded-lg bg-primary text-primary-foreground py-2.5 text-xs font-semibold flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity disabled:opacity-50"
-            >
-              {busy === "stake" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Coins className="h-3.5 w-3.5" />}
-              Stake
-            </button>
-            <button
-              onClick={onWithdraw}
-              disabled={!!busy || !stake || isLocked}
-              className="rounded-lg bg-background/60 border border-border/60 py-2.5 text-xs font-semibold flex items-center justify-center gap-1.5 hover:border-primary/60 transition-colors disabled:opacity-40"
-            >
-              {busy === "withdraw" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ArrowDownToLine className="h-3.5 w-3.5" />}
-              Withdraw
-            </button>
-            <button
-              onClick={onClaim}
-              disabled={!!busy || !stake || pending <= 0}
-              className="rounded-lg bg-background/60 border border-border/60 py-2.5 text-xs font-semibold flex items-center justify-center gap-1.5 hover:border-primary/60 transition-colors disabled:opacity-40"
-            >
-              {busy === "claim" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Gift className="h-3.5 w-3.5" />}
-              Claim
-            </button>
-          </div>
-
-          {/* Status line */}
-          {msg && (
-            <div className="mt-3 flex items-start gap-2 rounded-lg bg-background/40 border border-border/60 p-2 text-[11px]">
-              <AlertTriangle className="h-3.5 w-3.5 text-warning mt-0.5 shrink-0" />
-              <span className="font-mono text-muted-foreground">{msg}</span>
-            </div>
-          )}
-
-          {/* Footer */}
-          <div className="mt-4 flex items-center gap-2 text-[10px] text-muted-foreground">
-            <ShieldCheck className="h-3 w-3 text-success" />
-            Rewards scale with your Nexus tier. Data sovereignty enforced.
+          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-primary/30 grid place-items-center glow-ring">
+            <Coins className="h-5 w-5" />
           </div>
         </div>
+
+        {/* Stats strip */}
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          <Stat label="APY" value={`${APY}%`} />
+          <Stat label="TVL" value={TVL_USD} />
+          <Stat label="Chain" value={`#${OPN_CHAIN.chainId}`} />
+        </div>
+
+        {/* Controls */}
+        <div className="mt-5 grid lg:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <label className="block">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Amount to stake (OPN)</span>
+              <input
+                type="number"
+                min="0"
+                step="0.0001"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="0.00"
+                className="mt-1 w-full rounded-lg bg-background/60 border border-border/60 px-3 py-2 font-mono text-sm focus:outline-none focus:border-primary/60"
+              />
+            </label>
+
+            <div className="grid grid-cols-2 gap-2">
+              <label className="block">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Tier</span>
+                <select
+                  value={tier}
+                  onChange={(e) => setTier(Number(e.target.value))}
+                  className="mt-1 w-full rounded-lg bg-background/60 border border-border/60 px-2 py-2 text-sm focus:outline-none focus:border-primary/60"
+                >
+                  {[1,2,3,4,5].map((t) => (
+                    <option key={t} value={t}>Tier {t} · {TIER_MULTIPLIER[t]}x{t === NEXUS_TIER ? " (Nexus)" : ""}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="block">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Lock</span>
+                <select
+                  value={lockDays}
+                  onChange={(e) => setLockDays(Number(e.target.value))}
+                  className="mt-1 w-full rounded-lg bg-background/60 border border-border/60 px-2 py-2 text-sm focus:outline-none focus:border-primary/60"
+                >
+                  {LOCK_OPTIONS.map((d) => (
+                    <option key={d} value={d}>{d} days</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="text-[11px] font-mono text-muted-foreground">
+              Est. yearly reward: <span className="text-primary">{fmtOPN(estYearly)} OPN</span>
+            </div>
+          </div>
+
+          {/* Position panel */}
+          <div className="rounded-xl bg-background/40 border border-border/60 p-3 space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">Wallet</span>
+              <span className="font-mono">{address ? shortAddress(address) : "—"}</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">Staked</span>
+              <span className="font-mono">{stake ? `${fmtOPN(stake.amount)} OPN` : "0 OPN"}</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">Tier · Multiplier</span>
+              <span className="font-mono">{stake ? `T${stake.tier} · ${TIER_MULTIPLIER[stake.tier]}x` : `T${tier} · ${TIER_MULTIPLIER[tier]}x`}</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground flex items-center gap-1"><Lock className="h-3 w-3" /> Lock ends</span>
+              <span className={`font-mono ${isLocked ? "text-warning" : "text-success"}`}>
+                {stake ? (isLocked ? fmtCountdown(timeLeft) : "Unlocked") : "—"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground flex items-center gap-1"><Gift className="h-3 w-3" /> Pending</span>
+              <span className="font-mono text-primary">{fmtOPN(pending)} OPN</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          <button
+            onClick={onStake}
+            disabled={!!busy}
+            className="rounded-lg bg-primary text-primary-foreground py-2.5 text-xs font-semibold flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity disabled:opacity-50"
+          >
+            {busy === "stake" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Coins className="h-3.5 w-3.5" />}
+            Stake
+          </button>
+          <button
+            onClick={onWithdraw}
+            disabled={!!busy || !stake || isLocked}
+            className="rounded-lg bg-background/60 border border-border/60 py-2.5 text-xs font-semibold flex items-center justify-center gap-1.5 hover:border-primary/60 transition-colors disabled:opacity-40"
+          >
+            {busy === "withdraw" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ArrowDownToLine className="h-3.5 w-3.5" />}
+            Withdraw
+          </button>
+          <button
+            onClick={onClaim}
+            disabled={!!busy || !stake || pending <= 0}
+            className="rounded-lg bg-background/60 border border-border/60 py-2.5 text-xs font-semibold flex items-center justify-center gap-1.5 hover:border-primary/60 transition-colors disabled:opacity-40"
+          >
+            {busy === "claim" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Gift className="h-3.5 w-3.5" />}
+            Claim
+          </button>
+        </div>
+
+        {/* Status line */}
+        {msg && (
+          <div className="mt-3 flex items-start gap-2 rounded-lg bg-background/40 border border-border/60 p-2 text-[11px]">
+            <AlertTriangle className="h-3.5 w-3.5 text-warning mt-0.5 shrink-0" />
+            <span className="font-mono text-muted-foreground">{msg}</span>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="mt-4 flex items-center gap-2 text-[10px] text-muted-foreground">
+          <ShieldCheck className="h-3 w-3 text-success" />
+          Rewards scale with your Nexus tier. Data sovereignty enforced.
+        </div>
       </div>
+    </div>
+  );
+
+  if (embedded) return content;
+  return (
+    <section id="staking" className="px-5">
+      {content}
     </section>
   );
 }
