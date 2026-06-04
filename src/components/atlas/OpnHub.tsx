@@ -65,8 +65,8 @@ export function OpnHub() {
         </div>
       )}
       {activeTile === "RWA Vault" && (
-        <div className="mt-3 glass rounded-xl p-4 text-sm text-muted-foreground">
-          RWA Vault module coming soon — tokenized real-world assets on OPN Chain.
+        <div className="mt-3">
+          <RwaVault />
         </div>
       )}
       {activeTile === "ATLAS Tools" && (
