@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Coins, Vault, Server, ArrowUpRight, Wifi, WifiOff, Loader2, ChevronDown } from "lucide-react";
 import { useOPNChain, OPN_CHAIN } from "@/hooks/useOPNChain";
 import { StakingModule } from "./StakingModule";
+import { RwaVault } from "./RwaVault";
 
 const TILES = [
   { icon: Coins, label: "Staking", meta: "12.4% APY", accent: "from-primary/80 to-primary/20" },
@@ -64,8 +65,8 @@ export function OpnHub() {
         </div>
       )}
       {activeTile === "RWA Vault" && (
-        <div className="mt-3 glass rounded-xl p-4 text-sm text-muted-foreground">
-          RWA Vault module coming soon — tokenized real-world assets on OPN Chain.
+        <div className="mt-3">
+          <RwaVault />
         </div>
       )}
       {activeTile === "ATLAS Tools" && (
