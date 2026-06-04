@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useWallet } from "@/hooks/useWallet";
 import {
   Vault,
   ShieldCheck,
@@ -89,8 +88,7 @@ function levelBadge(level: Asset["level"]) {
 }
 
 export function RwaVault() {
-  const { address } = useWallet();
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipId, setTooltipId] = useState<string | null>(null);
   const canUnlock = NEXUS_TIER >= TIER_REQUIRED;
 
   return (
@@ -184,8 +182,8 @@ export function RwaVault() {
                   {/* L3 tooltip */}
                   <div
                     className="relative"
-                    onMouseEnter={() => setShowTooltip(asset.id === "gov-001" ? true : false)}
-                    onMouseLeave={() => setShowTooltip(false)}
+                    onMouseEnter={() => setTooltipId(asset.level === "L3" ? asset.id : null)}
+                    onMouseLeave={() => setTooltipId(null)}
                   >
                     <span
                       className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-semibold ${levelBadge(asset.level)}`}
@@ -193,7 +191,7 @@ export function RwaVault() {
                       <ShieldCheck className="h-3 w-3" />
                       {asset.level}
                     </span>
-                    {showTooltip && asset.level === "L3" && asset.id === "gov-001" && (
+                    {tooltipId === asset.id && asset.level === "L3" && (
                       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 rounded-lg bg-background border border-border/80 p-3 shadow-lg z-10">
                         <div className="flex items-start gap-2">
                           <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
