@@ -3,6 +3,7 @@ import { Coins, Vault, Server, ArrowUpRight, Wifi, WifiOff, Loader2, ChevronDown
 import { useOPNChain, OPN_CHAIN } from "@/hooks/useOPNChain";
 import { StakingModule } from "./StakingModule";
 import { RwaVault } from "./RwaVault";
+import { AtlasTools } from "./AtlasTools";
 
 const TILES = [
   { icon: Coins, label: "Staking", meta: "12.4% APY", accent: "from-primary/80 to-primary/20" },
@@ -70,8 +71,8 @@ export function OpnHub() {
         </div>
       )}
       {activeTile === "ATLAS Tools" && (
-        <div className="mt-3 glass rounded-xl p-4 text-sm text-muted-foreground">
-          ATLAS Tools module coming soon — sovereign AI tooling suite.
+        <div className="mt-3">
+          <AtlasTools />
         </div>
       )}
 
