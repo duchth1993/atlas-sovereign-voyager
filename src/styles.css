@@ -120,3 +120,74 @@
 .animate-pulse-glow { animation: pulse-glow 2.4s ease-in-out infinite; }
 .animate-scan { animation: scan 4s linear infinite; }
 .animate-ping-slow { animation: ping-slow 2s ease-out infinite; }
+
+/* ── Wave Background ──────────────────────────────────────── */
+.wave-layer {
+  position: absolute;
+  left: -50%;
+  bottom: 0;
+  width: 200%;
+  height: 60vh;
+  min-height: 420px;
+  will-change: transform;
+}
+@keyframes wave-flow-a {
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-25%, 0, 0); }
+}
+@keyframes wave-flow-b {
+  0%   { transform: translate3d(-25%, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+@keyframes wave-bob {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(-12%, -8px, 0); }
+}
+.wave-1 { animation: wave-flow-a 22s linear infinite; }
+.wave-2 {
+  animation: wave-flow-b 16s linear infinite;
+  bottom: -20px;
+  height: 55vh;
+}
+.wave-3 {
+  animation: wave-bob 10s ease-in-out infinite;
+  bottom: -40px;
+  height: 50vh;
+}
+
+.wave-refract {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  mix-blend-mode: screen;
+  opacity: 0.35;
+}
+.wave-refract-a {
+  width: 40vw; height: 40vw;
+  left: 10%; bottom: 25%;
+  background: radial-gradient(circle, #3A7BFF 0%, transparent 70%);
+  animation: wave-bob 14s ease-in-out infinite;
+}
+.wave-refract-b {
+  width: 35vw; height: 35vw;
+  right: 5%; bottom: 15%;
+  background: radial-gradient(circle, #9F6BFF 0%, transparent 70%);
+  animation: wave-bob 18s ease-in-out infinite reverse;
+}
+
+.wave-particles {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 60%, rgba(255,255,255,0.6), transparent 60%),
+    radial-gradient(1.5px 1.5px at 28% 55%, rgba(58,123,255,0.7), transparent 60%),
+    radial-gradient(1.5px 1.5px at 45% 65%, rgba(255,255,255,0.5), transparent 60%),
+    radial-gradient(2px 2px at 62% 58%, rgba(159,107,255,0.6), transparent 60%),
+    radial-gradient(1.5px 1.5px at 78% 62%, rgba(255,255,255,0.55), transparent 60%),
+    radial-gradient(1.5px 1.5px at 92% 56%, rgba(58,123,255,0.6), transparent 60%);
+  animation: pulse-glow 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wave-1, .wave-2, .wave-3, .wave-refract, .wave-particles { animation: none; }
+}
