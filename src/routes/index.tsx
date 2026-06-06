@@ -5,6 +5,7 @@ import { AtlasMap } from "@/components/atlas/AtlasMap";
 import { NexusCard } from "@/components/atlas/NexusCard";
 import { OpnHub } from "@/components/atlas/OpnHub";
 import { StakingModule } from "@/components/atlas/StakingModule";
+import { WaveBackground } from "@/components/atlas/WaveBackground";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <div className="min-h-screen relative">
+      <WaveBackground />
       <TopBar />
 
       {/* Mobile: stacked. Desktop: full bleed with grid */}
